@@ -1,0 +1,7 @@
+module(
+    name = "gtest_bazel",
+    version = "1.0",
+)
+
+bazel_dep(name = "googletest", version = "1.14.0")
+
