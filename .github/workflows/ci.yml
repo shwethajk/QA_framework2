@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Postman collection
         run: |
-          newman run API_Tests/collection.json \
+          newman run API_Tests/postman_collection.json \
           -e API_Tests/postman_environment.json
 
   ui-tests:
