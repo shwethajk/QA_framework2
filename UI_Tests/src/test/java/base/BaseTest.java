@@ -1,12 +1,13 @@
 package base;
+if (System.getenv("CI") != null) {
+    options.addArguments("--headless=new");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage")
+    options.addArguments("--disable-gpu"); // Safe
+    options.addArguments("--window-size=1920,1080");
+}
 
 ChromeOptions options = new ChromeOptions();
-
-options.addArguments("--headless=new"); // REQUIRED
-options.addArguments("--no-sandbox"); // REQUIRED for GitHub runners
-options.addArguments("--disable-dev-shm-usage"); // REQUIRED
-options.addArguments("--disable-gpu"); // Safe
-options.addArguments("--window-size=1920,1080");
 
 WebDriver driver = new ChromeDriver(options);
 
