@@ -39,18 +39,28 @@ jobs:
       - name: Install cmake and g++
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ libgtest-dev
-          cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib           
+          sudo apt-get install -y cmake build-essential
+          
+        # sudo apt-get install -y cmake g++ libgtest-dev
+        # cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib           
         # uses: bazelbuild/setup-bazelisk@v3
 
       - name: Run unit tests (GTest)
         working-directory: Unit_tests_gtest
         run: |
-          mkdir build
-          cd build
-          cmake ..
-          make
-          ./math_utils_test
+          ./scripts/run_tests.sh
+        # mkdir build
+        # cd build
+        # cmake ..
+        # make
+        # ./math_utils_test
+        
+      - name: Upload Gtest cmakelist report
+        uses: actions/upload-artifact@v4
+        with:
+         name: gtest-cmake-report
+         path: Unit_tests_gtest/output/reports/gtest-report.xml
+
 
   api-tests:
     name: API Tests (Postman + Newman)
