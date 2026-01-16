@@ -1,12 +1,17 @@
-# Enable disk cache (local)
+########################################
+# Local disk cache (per-machine)
+########################################
 build --disk_cache=~/.bazel-cache
 test  --disk_cache=~/.bazel-cache
 
-# Remote cache (example – commented for safety)
-# build --remote_cache=http://your-remote-cache:8080
-# test  --remote_cache=http://your-remote-cache:8080
+########################################
+# Shared remote cache (TEAM + CI)
+########################################
+build --remote_cache=http://localhost:8080
+test  --remote_cache=http://localhost:8080
 
-# Improve CI stability
+########################################
+# CI stability & debugging
+########################################
 build --keep_going
 test  --test_output=errors
-
