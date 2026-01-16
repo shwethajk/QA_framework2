@@ -29,9 +29,11 @@ echo "Running tests..."
 ctest --output-on-failure
 
 echo "Generating coverage report..."
+
 gcovr \
   --root .. \
   --xml-pretty \
   --output ../$REPORT_DIR/coverage.xml
+ls -l reports/gtest
 
 echo "Reports generated at: $REPORT_DIR"
