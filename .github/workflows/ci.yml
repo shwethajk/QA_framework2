@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gtest-reports
-          path: reports/gtest
+          path: ${{ github.workspace }}/reports/gtest
 
   #################################
   # API Tests
