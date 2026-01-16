@@ -61,7 +61,7 @@ jobs:
           java-version: 17
 
       - name: Run Selenium tests
-        working-directory: ui_tests
+        working-directory: UI_Tests
         run: |
           mvn clean test
           
