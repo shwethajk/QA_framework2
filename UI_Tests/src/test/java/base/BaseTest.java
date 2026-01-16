@@ -18,6 +18,7 @@ public class BaseTest {
 
         ChromeOptions options = new ChromeOptions();
 
+        // CI-safe settings
         if (System.getenv("CI") != null) {
             options.addArguments("--headless=new");
             options.addArguments("--no-sandbox");
@@ -28,7 +29,9 @@ public class BaseTest {
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-        driver.get("https://example.com");
+
+        // ✅ REAL demo login page
+        driver.get("https://the-internet.herokuapp.com/login");
     }
 
     @AfterMethod
