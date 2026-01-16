@@ -55,6 +55,14 @@ jobs:
           name: gtest-html-coverage
           path: Unit_tests_gtest/reports/html
 
+      - name: Deploy coverage to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: Unit_tests_gtest/reports/html
+          destination_dir: coverage
+    
+
 
       # - name: Run GTest + Coverage
       #   working-directory: Unit_tests_gtest
