@@ -5,29 +5,31 @@ echo "=============================="
 echo " GTest Clean Build + Test Run "
 echo "=============================="
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUTPUT_DIR="$ROOT_DIR/output"
-BUILD_DIR="$OUTPUT_DIR/build"
-REPORT_DIR="$OUTPUT_DIR/reports"
+ROOT_DIR=$(pwd)
+BUILD_DIR=build
+REPORT_DIR=reports/gtest
 
 echo "Cleaning old output..."
-rm -rf "$OUTPUT_DIR"
+rm -rf ${BUILD_DIR} reports
 
 echo "Creating directories..."
-mkdir -p "$BUILD_DIR" "$REPORT_DIR"
+mkdir -p ${BUILD_DIR} ${REPORT_DIR}
+
+cd ${BUILD_DIR}
 
 echo "Configuring CMake..."
-cd "$BUILD_DIR"
-cmake "$ROOT_DIR"
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 
-echo "Building project..."
+echo "Building..."
 cmake --build .
 
 echo "Running tests..."
-ctest --output-on-failure \
-      --test-output-junit "$REPORT_DIR/gtest-report.xml"
+ctest --output-on-failure
 
-echo "=============================="
-echo " Done"
-echo " Report: $REPORT_DIR/gtest-report.xml"
-echo "=============================="
+echo "Generating coverage report..."
+gcovr \
+  --root .. \
+  --xml-pretty \
+  --output ../${REPORT_DIR}/coverage.xml
+
+echo "✅ GTest + Coverage completed"
