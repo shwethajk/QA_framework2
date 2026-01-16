@@ -63,6 +63,12 @@ jobs:
          name: gtest-cmake-report
          path: Unit_tests_gtest/output/reports/gtest-report.xml
 
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        with:
+         name: test-reports
+         path: reports
+
 
   api-tests:
     name: API Tests (Postman + Newman)
@@ -106,11 +112,7 @@ jobs:
         run: |
           mvn clean test
 
-      - name: Upload test reports
-        uses: actions/upload-artifact@v4
-        with:
-         name: test-reports
-         path: reports
+      
 
 
 
