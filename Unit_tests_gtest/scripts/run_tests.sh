@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 set -e
 
-echo "=============================="
-echo " GTest Clean Build + Test Run "
-echo "=============================="
+echo "=================================="
+echo " GTest Clean Build + Coverage Run "
+echo "=================================="
 
-ROOT_DIR=$(pwd)
-BUILD_DIR=build
-REPORT_DIR=reports/gtest
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+BUILD_DIR="$ROOT_DIR/build"
+REPORT_DIR="$ROOT_DIR/reports/gtest"
 
-echo "Cleaning old output..."
-rm -rf ${BUILD_DIR} reports
+echo "Cleaning previous build and reports..."
+rm -rf "$BUILD_DIR"
+rm -rf "$ROOT_DIR/reports"
 
-echo "Creating directories..."
-mkdir -p ${BUILD_DIR} ${REPORT_DIR}
+echo "Creating fresh directories..."
+mkdir -p "$BUILD_DIR"
+mkdir -p "$REPORT_DIR"
 
-cd ${BUILD_DIR}
+cd "$BUILD_DIR"
 
 echo "Configuring CMake..."
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 
-echo "Building..."
+echo "Building tests..."
 cmake --build .
 
 echo "Running tests..."
@@ -28,8 +30,11 @@ ctest --output-on-failure
 
 echo "Generating coverage report..."
 gcovr \
-  --root .. \
+  --root "$ROOT_DIR" \
   --xml-pretty \
-  --output ../${REPORT_DIR}/coverage.xml
+  --output "$REPORT_DIR/coverage.xml"
 
-echo "✅ GTest + Coverage completed"
+echo "=================================="
+echo " ✅ Tests passed & reports created "
+echo " 📁 reports/gtest/coverage.xml"
+echo "=================================="
