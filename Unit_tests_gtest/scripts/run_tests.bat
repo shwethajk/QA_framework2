@@ -1,39 +1,59 @@
-@echo off
-setlocal
+#!/usr/bin/env bash
+set -e
 
-echo ==============================
-echo  GTest Clean Build + Test Run
-echo ==============================
+echo "=== CLEAN BUILD ==="
+rm -rf reports
+mkdir -p reports/{bazel,gtest,ui}
 
-set ROOT_DIR=%~dp0\..
-set OUTPUT_DIR=%ROOT_DIR%\output
-set BUILD_DIR=%OUTPUT_DIR%\build
-set REPORT_DIR=%OUTPUT_DIR%\reports
+#######################################
+# Bazel GTest
+#######################################
+echo "=== Running Bazel unit tests ==="
+cd Bazel_gtest_unit_tests
 
-echo Cleaning old output...
-if exist "%OUTPUT_DIR%" rmdir /s /q "%OUTPUT_DIR%"
+bazel test //tests:math_utils_test \
+  --test_output=all \
+  --combined_report=../reports/bazel/test.log
 
-echo Creating directories...
-mkdir "%BUILD_DIR%"
-mkdir "%REPORT_DIR%"
+cd ..
 
-echo Configuring CMake...
-cd /d "%BUILD_DIR%"
-cmake "%ROOT_DIR%"
-if errorlevel 1 exit /b 1
+#######################################
+# CMake + GTest
+#######################################
+echo "=== Running CMake GTest ==="
+cd Unit_tests_gtest
 
-echo Building project...
-cmake --build .
-if errorlevel 1 exit /b 1
+rm -rf build
+mkdir build && cd build
 
-echo Running tests...
-ctest --output-on-failure ^
-      --test-output-junit "%REPORT_DIR%\gtest-report.xml"
+cmake -DCMAKE_BUILD_TYPE=Debug \
+      -DCMAKE_CXX_FLAGS="--coverage" \
+      ..
 
-echo ==============================
-echo Done
-echo Report: %REPORT_DIR%\gtest-report.xml
-echo ==============================
+make -j$(nproc)
+ctest --output-on-failure
 
-pause
-endlocal
+# Coverage
+gcovr \
+  --root .. \
+  --xml ../reports/gtest/coverage.xml \
+  --html ../reports/gtest/coverage.html \
+  --html-details
+
+cd ../..
+
+#######################################
+# UI Tests (Selenium + TestNG)
+#######################################
+echo "=== Running UI tests ==="
+cd UI_Tests
+
+mvn clean test \
+  -Dsurefire.reportFormat=xml \
+  -Dsurefire.useFile=true
+
+cp -r target/surefire-reports ../reports/ui/
+
+cd ..
+
+echo "=== ALL TESTS COMPLETED ==="
