@@ -43,17 +43,30 @@ jobs:
           sudo apt-get install -y cmake build-essential
           pip install gcovr
 
-      - name: Run GTest + Coverage
+      - name: Run GTest with coverage
         working-directory: Unit_tests_gtest
         run: |
           chmod +x scripts/run_tests.sh
           ./scripts/run_tests.sh
-
-      - name: Upload GTest reports
+      
+      - name: Upload HTML coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: gtest-reports
-          path: ${{ github.workspace }}/reports/gtest
+          name: gtest-html-coverage
+          path: Unit_tests_gtest/reports/html
+
+
+      # - name: Run GTest + Coverage
+      #   working-directory: Unit_tests_gtest
+      #   run: |
+      #     chmod +x scripts/run_tests.sh
+      #     ./scripts/run_tests.sh
+
+      # - name: Upload GTest reports
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: gtest-reports
+      #     path: ${{ github.workspace }}/reports/gtest
 
   #################################
   # API Tests
