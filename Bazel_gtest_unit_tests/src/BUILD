@@ -1,7 +1,8 @@
-
 cc_library(
     name = "math_utils",
+    srcs = ["math_utils.cpp"],  # or .c if C
     hdrs = ["math_utils.h"],
-    srcs = ["math_utils.cpp"],
+    includes = ["."],
     visibility = ["//visibility:public"],
 )
+
