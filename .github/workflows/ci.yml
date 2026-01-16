@@ -43,7 +43,7 @@ jobs:
       - name: Run Postman collection
         run: |
           newman run API_Tests/collection.json \
-          -e API_Tests/environment.json
+          -e API_Tests/postman_environment.json
 
   ui-tests:
     name: UI Tests (Selenium + TestNG)
