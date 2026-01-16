@@ -48,7 +48,7 @@ jobs:
       - name: Run unit tests (GTest)
         working-directory: Unit_tests_gtest
         run: |
-          cmhmod +x /scripts/run_tests.sh
+          chmod +x /scripts/run_tests.sh
         # mkdir build
         # cd build
         # cmake ..
