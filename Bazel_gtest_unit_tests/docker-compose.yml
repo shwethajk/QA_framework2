@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  bazel-remote-cache:
+    image: buchgr/bazel-remote-cache
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./bazel-cache-data:/data
+    command: --dir /data
+    
