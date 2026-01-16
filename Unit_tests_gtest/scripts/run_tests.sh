@@ -36,7 +36,7 @@ gcovr \
   --output ../$REPORT_DIR/coverage.xml
 ls -l reports/gtest
 
-gcovr -r .. --xml-pretty -o ../$REPORT_DIR/coverage.xml -v
+gcovr -r .. --xml-pretty -o ../reports/gtest/coverage.xml -v
 
 
 echo "Reports generated at: $REPORT_DIR"
