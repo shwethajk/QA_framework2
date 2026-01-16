@@ -19,7 +19,7 @@ jobs:
         uses: bazelbuild/setup-bazelisk@v3
 
       - name: Run GTest unit tests (Bazel)
-        working-directory: gtest_bazel
+        working-directory: Bazel_gtest_unit_tests
         run: |
           bazel test //tests:math_utils_test
 
@@ -42,8 +42,8 @@ jobs:
 
       - name: Run Postman collection
         run: |
-          newman run api_tests/collection.json \
-          -e api_tests/environment.json
+          newman run API_Tests/collection.json \
+          -e API_Tests/environment.json
 
   ui-tests:
     name: UI Tests (Selenium + TestNG)
