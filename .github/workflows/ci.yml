@@ -18,10 +18,14 @@ jobs:
       - name: Install Bazel
         uses: bazelbuild/setup-bazelisk@v3
 
-      - name: Run GTest unit tests (Bazel)
+        # ❌ DO NOT use actions/cache for bazel-out
+        # ✅ Bazel remote cache is the correct solution
+
+      - name: Run unit tests
         working-directory: Bazel_gtest_unit_tests
         run: |
-          bazel test //tests:math_utils_test
+          bazel test //tests:math_utils_test \
+            --remote_cache=http://localhost:8080
 
   api-tests:
     name: API Tests (Postman + Newman)
@@ -65,3 +69,22 @@ jobs:
         run: |
           mvn clean test
           
+
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Bazel
+        uses: bazelbuild/setup-bazelisk@v3
+
+      # ❌ DO NOT use actions/cache for bazel-out
+      # ✅ Bazel remote cache is the correct solution
+
+      - name: Run Bazel tests
+        working-directory: Bazel_gtest_unit_tests
+        run: |
+          bazel test //tests:math_utils_test \
+            --remote_cache=http://localhost:8080
+            
