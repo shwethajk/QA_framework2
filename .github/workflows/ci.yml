@@ -7,113 +7,99 @@ on:
     branches: [ main ]
 
 jobs:
+
+  #################################
+  # Bazel Unit Tests
+  #################################
   bazel-unit-tests:
     name: Unit Tests (Bazel)
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Install Bazel
         uses: bazelbuild/setup-bazelisk@v3
 
-        # ❌ DO NOT use actions/cache for bazel-out
-        # ✅ Bazel remote cache is the correct solution
-
-      - name: Run unit tests (Bazel)
+      - name: Run Bazel tests
         working-directory: Bazel_gtest_unit_tests
         run: |
-          bazel test //tests:math_utils_test \
-            --remote_cache=http://localhost:8080
+          bazel test //tests:math_utils_test --test_output=all
 
+  #################################
+  # CMake + GTest
+  #################################
   gtest-unit-tests:
-    name: Unit Tests (GTest)
+    name: Unit Tests (GTest + CMake)
     runs-on: ubuntu-latest
     needs: bazel-unit-tests
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install cmake and g++
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake build-essential
-      - name: Install gcovr
-        run: pip install gcovr
+          pip install gcovr
 
-        # sudo apt-get install -y cmake g++ libgtest-dev
-        # cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib           
-        # uses: bazelbuild/setup-bazelisk@v3
-
-      - name: Run unit tests (GTest)
+      - name: Run GTest + Coverage
         working-directory: Unit_tests_gtest
         run: |
-          chmod +x ./scripts/run_tests.sh
-        # mkdir build
-        # cd build
-        # cmake ..
-        # make
-        # ./math_utils_test
-        
-      - name: Upload Gtest cmakelist report
+          chmod +x scripts/run_tests.sh
+          ./scripts/run_tests.sh
+
+      - name: Upload GTest reports
         uses: actions/upload-artifact@v4
         with:
-         name: gtest-cmake-report
-         path: Unit_tests_gtest/output/reports/gtest-report.xml
+          name: gtest-reports
+          path: reports/gtest
 
-      - name: Upload test reports
-        uses: actions/upload-artifact@v4
-        with:
-         name: test-reports
-         path: reports
-
-
+  #################################
+  # API Tests
+  #################################
   api-tests:
     name: API Tests (Postman + Newman)
     runs-on: ubuntu-latest
     needs: gtest-unit-tests
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Run Postman collection
+      - name: Run API tests
         run: |
           newman run API_Tests/postman_collection.json \
-          -e API_Tests/postman_environment.json
+            -e API_Tests/postman_environment.json
 
+  #################################
+  # UI Tests
+  #################################
   ui-tests:
     name: UI Tests (Selenium + TestNG)
     runs-on: ubuntu-latest
     needs: api-tests
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Run Selenium tests
+      - name: Run UI tests
         working-directory: UI_Tests
-        run: |
-          mvn clean test
+        run: mvn clean test
 
-      
-
-
-
-
+      - name: Upload UI test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-reports
+          path: UI_Tests/target/surefire-reports
