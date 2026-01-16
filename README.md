@@ -28,3 +28,5 @@ mvn test
 
 ## CI
 Pipeline runs automatically via GitHub Actions after every push.
+
+Trigger : push 1 readme change
