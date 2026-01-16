@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gtest-reports
-          path: Bazel_gtest_unit_tests/reports/gtest
+          path: reports/gtest
 
   #################################
   # API Tests
